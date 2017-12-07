@@ -40,7 +40,9 @@ The analysis was conducted on a 100K+ dataset from Kaggle. The 100K+ records rep
 
 · Diabetes = If the patient has Diabetes or not
 
-· Alcoholism = If the patient has Alcoholism or not. Handicap = If the patient has Handicap or not. This is not a binary measurement, but is measured in the total number of handicaps. For example, if the person is blind and can't walk the total is 2.
+· Alcoholism = If the patient has Alcoholism or not. 
+
+· Handicap = If the patient has Handicap or not. This is not a binary measurement, but is measured in the total number of handicaps. For example, if the person is blind and can't walk the total is 2.
 
 · SMS_received = If the patient received an SMS for the appointment. This also is not a binary measurement, but measures the number of SMS texts the patient received.
 
