@@ -16,43 +16,48 @@ sapply(Data_Sub, sd)
 xtabs(~NOSHOW + Age, data = Data_Sub)
 
 # Fitting the Model 
-model <- multinom(NOSHOW ~., data=Data_Sub)
+model <- glm(NOSHOW ~., family=binomial(link='logit'), data=Data_Sub)
 predict <- predict(model, type ='response')
 
-plot(model)
-train_idx <- sample(1:nrow(Data), 1000, replace=FALSE)
-train <- Data[train_idx,]
-test <- Data[-train_idx,]
+summary(model)
+anova(model, test="Chisq")
+confint(model)
 
-#ggplot the data
-ggplot(Data_Sub, aes(x=Age, y=NOSHOW)) + geom_point() + 
-  stat_smooth(method="glm", family="binomial", se=FALSE)
+# Wald Test 
+wald.test(b = coef(model), Sigma = vcov(model), Terms =2)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =3)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =4)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =5)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =6)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =7)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =8)
+wald.test(b = coef(model), Sigma = vcov(model), Terms =9)
 
-ggplot(Data_Sub, aes(x = Age, y = NOSHOW)) + geom_ribbon(aes(ymin = LL,
-    ymax = UL, fill = rank), alpha = 0.2) + geom_line(aes(colour = rank),
-    size = 1)
-
-#Confusion Matrix
+# Misclassification Rate 
 p <- predict(model, Data_Sub)
 table <- table(p, Data_Sub$NOSHOW)
 table
-sum(diag(table))/sum(table)
-1- sum(diag(table))/sum(table)
+Classification_Rate = sum(diag(table))/sum(table)
+Classification_Rate
+Misclassification_Rate = 1- sum(diag(table))/sum(table)
+Misclassification_Rate
 
 table(Data_Sub$NOSHOW)
 88208/(88208+22319)
 
-#ROCR & Model Performance Evaluation 
-pred <- predict(model, Data_Sub, type= 'prob')
+#Model Performance Evaluation 
+pred <- predict(model, Data_Sub, type= "response")
+head(pred)
 head(Data_Sub)
+hist(pred)
 predf <- prediction(pred, Data_Sub$NOSHOW)
 eval <- performance(predf, "acc")
 plot(eval)
 abline(h=0.80, v=0.35)
 
-#ROCR Curve
-pred <- prediction(pred, Data_Sub$NOSHOW)
-roc <- performance(pred, "tpr", "fpr")
+#Reciever Operating Characteristic (ROC) Curve
+pred2 <- prediction(pred, Data_Sub$NOSHOW)
+roc <- performance(pred2, "tpr", "fpr")
 plot(roc,
      colorize=T,
      main = "ROC Curve",
@@ -61,20 +66,13 @@ plot(roc,
 abline(a=0, b=1)
 
 # Area Under Curve (AUC)
-auc <- performance(pred, "auc")
-auc <- unlist(slot(auc, "y.values"))
-auc <- round(auc, 4)
+auc <- performance(pred2, "auc")
+auc2 <- unlist(slot(auc, "y.values"))
+auc <- round(auc2, 4)
 legend(.6, .2, auc, title = "AUC", cex =.5)
 
 # Identify Best Values
 max <- which.max(slot(eval, "y.values")[[1]])
 acc <- slot(eval, "y.values")[[1]][max]
 cut <- slot(eval, "x.values")[[1]][max]
-
-#histogram
-hist(pred)
-
-# Summary, Confint, and ANOVA
-summary(model)
-confint(model)
-anova.multinom(model, test="Chisq")
+print(c(Accuracy=acc, Cutoff=cut))
