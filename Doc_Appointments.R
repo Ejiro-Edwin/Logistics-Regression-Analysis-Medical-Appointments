@@ -12,21 +12,23 @@ Data_Sub <- subset(Data, select=c(3,6,8,9,10,11,12,13,14))
 head(Data_Sub)
 str(Data_Sub)
 sapply(Data_Sub, sd)
-
 xtabs(~NOSHOW + Age, data = Data_Sub)
-
-# Fitting the Model 
-model <- glm(NOSHOW ~., family=binomial(link='logit'), data=Data_Sub)
-predict <- predict(model, type ='response')
-
-summary(model)
-anova(model, test="Chisq")
-confint(model)
 
 #Split dataset into "Train" *(80%) and "Test" (20%)
 Split <- sample(2, nrow(Data_Sub), replace=TRUE, prob =c(0.8, 0.2))
 Train <- Data_Sub[Split==1,]
 Test <- Data_Sub[Split==2,]
+
+# Fitting the Model 
+model <- glm(NOSHOW ~., family=binomial(link='logit'), data=Train)
+model2 <- glm(NOSHOW ~ Age + Scholarship + Hypertension + Diabetes + Alcoholism  + SMS_received, 
+              family=binomial(link='logit'), data=Train)
+predict <- predict(model, type ='response')
+
+summary(model)
+summary(model2)
+anova(model, test="Chisq")
+confint(model)
 
 # Wald Test 
 wald.test(b = coef(model), Sigma = vcov(model), Terms =2)
@@ -68,6 +70,13 @@ plot(roc,
      main = "ROC Curve",
      ylab = "Sensitivity",
      xlab = "1 - Specificity")
+abline(a=0, b=1)
+
+#ROCR
+p <- predict(model2, newdata=subset(Test,select=c(1,2,3,4,5,6,7,8)), type='response')
+pr <- prediction(p, Test$NOSHOW)
+prf <- performance(pr, measure = "tpr", x.measure ="fpr")
+plot(prf)
 abline(a=0, b=1)
 
 # Area Under Curve (AUC)
