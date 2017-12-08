@@ -23,6 +23,11 @@ summary(model)
 anova(model, test="Chisq")
 confint(model)
 
+#Split dataset into "Train" *(80%) and "Test" (20%)
+Split <- sample(2, nrow(Data_Sub), replace=TRUE, prob =c(0.8, 0.2))
+Train <- Data_Sub[Split==1,]
+Test <- Data_Sub[Split==2,]
+
 # Wald Test 
 wald.test(b = coef(model), Sigma = vcov(model), Terms =2)
 wald.test(b = coef(model), Sigma = vcov(model), Terms =3)
