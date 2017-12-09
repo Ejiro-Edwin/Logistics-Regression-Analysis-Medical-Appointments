@@ -30,6 +30,12 @@ summary(model2)
 anova(model, test="Chisq")
 confint(model)
 
+#Accessing the predicability of the model
+fitted.results <- predict(model, newdata=subset(Test, select=c(1,2,3,4,5,6,7,8)), type='response')
+fitted.results <- ifelse(fitted.results > 0.5, 1, 0)
+misClasificError <- mean(fitted.results != Test$NOSHOW)
+print(paste('Accuracy', 1-misClasificError))
+
 # Wald Test 
 wald.test(b = coef(model), Sigma = vcov(model), Terms =2)
 wald.test(b = coef(model), Sigma = vcov(model), Terms =3)
@@ -53,11 +59,11 @@ table(Data_Sub$NOSHOW)
 88208/(88208+22319)
 
 #Model Performance Evaluation 
-pred <- predict(model, Data_Sub, type= "response")
+pred <- predict(model, Train, type= "response")
 head(pred)
-head(Data_Sub)
+head(Train)
 hist(pred)
-predf <- prediction(pred, Data_Sub$NOSHOW)
+predf <- prediction(pred, Train$NOSHOW)
 eval <- performance(predf, "acc")
 plot(eval)
 abline(h=0.80, v=0.35)
@@ -80,7 +86,7 @@ plot(prf)
 abline(a=0, b=1)
 
 # Area Under Curve (AUC)
-auc <- performance(pred2, "auc")
+auc <- performance(p, "auc")
 auc2 <- unlist(slot(auc, "y.values"))
 auc <- round(auc2, 4)
 legend(.6, .2, auc, title = "AUC", cex =.5)
