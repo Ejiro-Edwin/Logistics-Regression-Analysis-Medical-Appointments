@@ -1,8 +1,13 @@
-# Logistics Regression Analysis: Medical Appointments
+---
+title: "Logistics Regression Analysis: Medical Appointments"
+author: David Tran 
+date: M'`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  md_document:
+    variant: markdown_github
+---
 
 Prediction: No Show Appointments
-
-Date: '`r format(Sys.Date(), "%B %d, %Y")`'
 
 Participants: Sarah Fite, Matthew Przybyla, and David Tran
 
