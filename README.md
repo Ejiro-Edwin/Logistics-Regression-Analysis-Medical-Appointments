@@ -7,7 +7,7 @@
 # <a name="team-members"></a> Group Members 
 * [David Tran](https://github.com/davidtran20)
 * [Matthew Przybyla](https://github.com/mprzybyla123)
-* [Sarah Fite]https://github.com/sarahoden)
+* [Sarah Fite](https://github.com/sarahoden)
 
 
 ## Introduction
